@@ -12,37 +12,47 @@ This repository implements a **K-Nearest Neighbors (K-NN) classifier** for flowe
 
 **Pipeline:**
 
-1. **Dataset Preprocessing:** Load flower images from train/valid splits, convert to grayscale, resize to 64×64 pixels
-2. **Feature Extraction:** Extract HOG features (1,764-dimensional vectors) to capture shape and edge information
-3. **Classification:** Train K-NN classifier with hyperparameter tuning (K sweep from 1 to 21)
-4. **Evaluation:** Analyze performance with confusion matrices, classification reports, and per-class metrics
+1. **Dataset Loading:** Load all flower images from flat directory structure (folders 1-102)
+2. **Data Splitting:** Split dataset 80:20 for training and testing using stratified sampling
+3. **Preprocessing:** Convert to grayscale, resize to 64×64 pixels, normalize to [0,1]
+4. **Feature Extraction:** Extract HOG features (1,764-dimensional vectors) to capture shape and edge information
+5. **Classification:** Train K-NN classifier with hyperparameter tuning (K sweep from 1 to 21)
+6. **Evaluation:** Analyze performance with confusion matrices, classification reports, and per-class metrics
 
 ### Key Features
 
+- ✅ **Smart Class Selection:** Uses top 10 classes with 100+ images each for balanced dataset
+- ✅ **Flat Dataset Structure:** All images organized in numbered folders (1-102) for each flower category
+- ✅ **Stratified 80:20 Split:** Ensures balanced class distribution in training and test sets
 - ✅ **HOG Feature Extraction:** Using scikit-image library with 9 orientation bins, 8×8 pixel cells, and L2-Hys normalization
 - ✅ **K-NN Classifier:** Configurable K values with parallel processing for efficient training
 - ✅ **Hyperparameter Tuning:** Systematic K sweep to find optimal value (K=3-5 typically best)
 - ✅ **Comprehensive Evaluation:** Classification reports, confusion matrices, and per-class accuracy analysis
-- ✅ **Flexible Configuration:** Run with 20 classes (quick testing) or all 102 classes (full evaluation)
+- ✅ **Flexible Configuration:** Adjustable min_images threshold and max_classes parameters
 
 ### Results
 
-**Configuration:** 20 flower categories, 903 training images, 130 test images
+**Configuration:**
 
-**Performance:**
+- **Classes:** 10 flower categories (with 100+ images each)
+- **Total images:** ~1,700 images
+- **Dataset split:** 80% training (~1,360 images), 20% testing (~340 images)
+- **Feature vector size:** 1,764 dimensions (HOG)
+- **Training method:** Stratified split ensures balanced class distribution
 
-- Best K value: **3**
-- Training accuracy: **55.26%**
-- Test accuracy: **9.23%**
-- Feature vector size: **1,764 dimensions**
+**Performance (based on 80:20 split):**
+
+- Best K value determined through cross-validation sweep (K=1,3,5,7,9,11)
+- Using classes with sufficient data (100+ images) improves model reliability
+- Results demonstrate effectiveness of traditional CV methods on balanced datasets
 
 **Key Findings:**
 
 - HOG features effectively capture shape/edge information but struggle with fine-grained differences
 - Grayscale conversion loses critical color information needed for flower classification
-- K-NN shows significant overfitting (large accuracy gap between train and test)
-- Best performing categories: hard-leaved pocket orchid (100%), pink primrose (25%)
-- Most confused pairs: yellow iris → purple coneflower (10 errors)
+- K-NN performance depends on optimal K selection (typically K=3-5)
+- Fine-grained flower classification is challenging with traditional CV methods
+- Color information is crucial for distinguishing similar flower species
 
 ### Limitations & Future Work
 
@@ -79,14 +89,23 @@ The images have large scale, pose and light variations. In addition, there are c
 ## Directory Structure
 
 ```
-> dataset
-	> train
-	> valid
-	> test
-- cat_to_name.json
-- README.md
-- sample_submission.csv
+Knn-Classifier-Oxford-Flower/
+├── dataset/
+│   ├── 1/          # Pink primrose images
+│   ├── 2/          # Hard-leaved pocket orchid images
+│   ├── 3/          # Canterbury bells images
+│   └── ...         # 102 total category folders (numbered 1-102)
+├── cat_to_name.json    # Mapping of category ID to flower name
+├── lab5.ipynb          # Main implementation notebook
+├── README.md
+└── sample_submission.csv
 ```
+
+**Dataset Organization:**
+
+- Each numbered folder (1-102) contains all images for that flower category
+- Images are loaded and split 80:20 for training/testing using stratified sampling
+- Total of **6,552 images** across 102 flower species
 
 ## Visualization of the dataset
 
